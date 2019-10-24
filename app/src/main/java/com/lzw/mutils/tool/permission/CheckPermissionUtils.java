@@ -67,6 +67,17 @@ public class CheckPermissionUtils {
      * @param permissionCallBack 权限申请回调
      * @param requestCode        requestCode
      * @param permissions        需要申请的权限
+     */
+    public void initPermission(@NonNull PermissionCallBack permissionCallBack, @NonNull int requestCode, String[] permissions) {
+        initPermission(permissionCallBack, requestCode, permissions, false);
+    }
+
+    /**
+     * 申请权限
+     *
+     * @param permissionCallBack 权限申请回调
+     * @param requestCode        requestCode
+     * @param permissions        需要申请的权限
      * @param needCustom         是否需要自定义提示dialog
      */
     public void initPermission(@NonNull PermissionCallBack permissionCallBack, @NonNull int requestCode, String[] permissions, boolean needCustom) {
