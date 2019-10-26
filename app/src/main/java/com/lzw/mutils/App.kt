@@ -2,6 +2,7 @@ package com.lzw.mutils
 
 import android.app.Application
 import com.lzw.mutils.tool.ContextInstance
+import com.lzw.mutils.tool.ScreenUtils
 import com.lzw.mutils.tool.To
 
 /**
@@ -15,5 +16,6 @@ class App : Application() {
 
         To.init(this)
         ContextInstance.setContext(this)
+        ScreenUtils.init(this)
     }
 }

@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void permitDialogCustom() {//当用户选择了不在询问后，这边会根据弹框引导用户去授权
                 super.permitDialogCustom();
-                //TODO 需要自定义弹框引导用户去授权
                 Log.d("MainActivity", "自定义弹框引导用户去授权");
             }
         }, 0x01, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, true);
@@ -70,6 +69,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        CheckPermissionUtils.getInstance(this).permissionsResult(requestCode, permissions, grantResults);
+        CheckPermissionUtils.getInstance(this).permissionsResult(requestCode, permissions, grantResults);//这边只需要将回调参数传递到CheckPermissionUtils就可以
     }
 }
