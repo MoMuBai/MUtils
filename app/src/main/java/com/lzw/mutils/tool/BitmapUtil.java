@@ -1,9 +1,11 @@
 package com.lzw.mutils.tool;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.support.annotation.DrawableRes;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -80,6 +82,39 @@ public class BitmapUtil {
         Log.d("BitmapUtil", "bitmap1.size:" + (bitmap1.getByteCount() / 1024 / 1024));
         Log.d("BitmapUtil", "bitmap1.getHeight():" + bitmap1.getHeight());
         Log.d("BitmapUtil", "bitmap1.getWidth():" + bitmap1.getWidth());
+    }
+
+    /**
+     * 获取drawable资源文件图片bitmap
+     *
+     * @param context context
+     * @param id      资源文件id
+     * @return 资源文件对应图片bitmap
+     */
+    public static Bitmap getBitmap(Context context, @DrawableRes int id) {
+        return BitmapFactory.decodeResource(context.getResources(), id);
+    }
+
+    /**
+     * 转换bitmap宽高
+     *
+     * @param bitmap    bitmap
+     * @param newWidth  新的bitmap宽度
+     * @param newHeight 新的bitmap高度
+     * @return 转换宽高后的bitmap
+     */
+    public static Bitmap conversionBitmap(Bitmap bitmap, int newWidth, int newHeight) {
+        Bitmap b = bitmap;
+        int width = b.getWidth();
+        int height = b.getHeight();
+        // 计算缩放比例
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // 取得想要缩放的matrix参数
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        // 得到新的图片
+        return Bitmap.createBitmap(b, 0, 0, width, height, matrix, true);
     }
 
 
