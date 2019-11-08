@@ -1,6 +1,7 @@
 package com.lzw.mutils.ui;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -70,5 +71,9 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         CheckPermissionUtils.getInstance(this).permissionsResult(requestCode, permissions, grantResults);//这边只需要将回调参数传递到CheckPermissionUtils就可以
+    }
+
+    public void goCamera(View view) {
+        startActivity(new Intent(this, CameraActivity.class));
     }
 }

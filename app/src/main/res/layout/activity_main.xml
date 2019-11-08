@@ -21,6 +21,12 @@
             android:layout_height="wrap_content"
             android:onClick="permitCustom"
             android:text="申请权限自定义弹框" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="goCamera"
+            android:text="自定义相机" />
     </LinearLayout>
 
 
