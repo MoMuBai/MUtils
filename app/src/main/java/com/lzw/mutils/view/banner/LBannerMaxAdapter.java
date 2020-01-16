@@ -2,6 +2,7 @@ package com.lzw.mutils.view.banner;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -25,6 +26,9 @@ public class LBannerMaxAdapter extends PagerAdapter {
 
     private LBannerImageLoader mLBannerImageLoader;
 
+    private View imageView;
+
+
     public LBannerMaxAdapter(Context mContext, LBannerImageLoader lBannerImageLoader, List mData) {
         this.mContext = mContext;
         this.mLBannerImageLoader = lBannerImageLoader;
@@ -43,12 +47,10 @@ public class LBannerMaxAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+        imageView = mLBannerImageLoader.createLoadView();
         currentPosition = position % mData.size();
-        ImageView imageView = new ImageView(mContext);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        mLBannerImageLoader.loadImg(imageView, mData.get(currentPosition));
+        Log.d("lzwww", "code1: " + imageView.hashCode());
+        mLBannerImageLoader.loadData(imageView, mData.get(currentPosition));
         container.addView(imageView);
         return imageView;
     }

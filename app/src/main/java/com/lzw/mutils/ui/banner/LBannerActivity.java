@@ -3,6 +3,9 @@ package com.lzw.mutils.ui.banner;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -10,6 +13,7 @@ import com.lzw.mutils.R;
 import com.lzw.mutils.ui.MainActivity;
 import com.lzw.mutils.view.banner.LBanner;
 import com.lzw.mutils.view.banner.LBannerImageLoader;
+import com.lzw.mutils.view.banner.LBannerImageView;
 import com.lzw.mutils.view.banner.LBannerStyle;
 
 import java.util.ArrayList;
@@ -44,11 +48,20 @@ public class LBannerActivity extends AppCompatActivity {
     }
 
 
-    private class MyLoader implements LBannerImageLoader<String> {
+    private class MyLoader implements LBannerImageLoader<String, ImageView> {
+
+
         @Override
-        public void loadImg(ImageView imageView, String path) {
+        public void loadData(ImageView imageView, String path) {
             Glide.with(LBannerActivity.this)
                     .load(path).into(imageView);
+        }
+
+        @Override
+        public ImageView createLoadView() {
+            LBannerImageView imageView = new LBannerImageView(LBannerActivity.this);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            return imageView;
         }
     }
 }

@@ -30,6 +30,7 @@ public class LBanner extends FrameLayout {
     private LBannerStyle mBannerStyle = LBannerStyle.ViewPagerHeadFootStyle;
     private int mLayout;
 
+
     public LBanner(Context context) {
         this(context, null);
     }
@@ -55,19 +56,6 @@ public class LBanner extends FrameLayout {
         mLayout = R.layout.layout_viewpager_banner;
     }
 
-
-    /**
-     * 设置布局
-     *
-     * @param layout
-     * @return
-     */
-    public LBanner setLayout(int layout) {
-        if (layout != 0) {
-            mLayout = layout;
-        }
-        return this;
-    }
 
     /**
      * 设置是RecyclerView还是ViewPager来支持的
@@ -98,7 +86,7 @@ public class LBanner extends FrameLayout {
      * @param data
      * @return
      */
-    public LBanner setImgData(List<?> data) {
+    public LBanner setImgData(List data) {
         if (null != data && data.size() > 0) {
             if (mBannerStyle == LBannerStyle.ViewPagerHeadFootStyle) {
                 mData.clear();
@@ -111,7 +99,8 @@ public class LBanner extends FrameLayout {
                 mData.clear();
                 mData.addAll(data);
             } else if (mBannerStyle == LBannerStyle.RecyclerViewStyle) {
-
+                mData.clear();
+                mData.addAll(data);
             }
         }
         return this;

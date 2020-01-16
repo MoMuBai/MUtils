@@ -23,6 +23,8 @@ public class LBannerHeadFootAdapter extends PagerAdapter {
 
     private LBannerImageLoader mLBannerImageLoader;
 
+    private View imageView;
+
     public LBannerHeadFootAdapter(Context mContext, LBannerImageLoader lBannerImageLoader, List mData) {
         this.mContext = mContext;
         this.mLBannerImageLoader = lBannerImageLoader;
@@ -41,11 +43,8 @@ public class LBannerHeadFootAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        ImageView imageView = new ImageView(mContext);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        mLBannerImageLoader.loadImg(imageView, mData.get(position));
+        imageView = mLBannerImageLoader.createLoadView();
+        mLBannerImageLoader.loadData(imageView, mData.get(position));
         container.addView(imageView);
         return imageView;
     }
