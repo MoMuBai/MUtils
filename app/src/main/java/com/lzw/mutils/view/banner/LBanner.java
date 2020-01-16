@@ -190,6 +190,23 @@ public class LBanner extends FrameLayout {
     private void buildMaxViewPager() {
         View inflate = mLayoutInflater.inflate(mLayout, this);
         mViewPager = inflate.findViewById(R.id.view_pager);
+        mIndicatorGroup = inflate.findViewById(R.id.layout_indicator);
+        for (int i = 0; i < mData.size(); i++) {
+            ImageView imageView = new ImageView(mContext);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtils.dp2px(8), ScreenUtils.dp2px(8));
+            imageView.setLayoutParams(layoutParams);
+            layoutParams.bottomMargin = ScreenUtils.dp2px(8);
+            layoutParams.topMargin = ScreenUtils.dp2px(8);
+            layoutParams.rightMargin = ScreenUtils.dp2px(8);
+            if (i == 0) {
+                imageView.setImageDrawable(mSelectIndicator);
+            } else {
+                imageView.setImageDrawable(mUnSelectIndicator);
+            }
+            mIndicatorGroup.setGravity(mIndicatorGravity);
+            mIndicatorView.add(imageView);
+            mIndicatorGroup.addView(imageView);
+        }
         mLBannerMaxAdapter = new LBannerMaxAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener);
         mViewPager.setAdapter(mLBannerMaxAdapter);
         mViewPager.setCurrentItem(mData.size() * 10000);//取一个较大值
@@ -202,6 +219,14 @@ public class LBanner extends FrameLayout {
             @Override
             public void onPageSelected(int position) {
                 mCurrentPos = position % mData.size();
+                mLBannerMaxAdapter.setOnClickPos(mCurrentPos);
+                for (int i = 0; i < mIndicatorView.size(); i++) {
+                    if (mCurrentPos == i) {
+                        mIndicatorView.get(i).setImageDrawable(mSelectIndicator);
+                    } else {
+                        mIndicatorView.get(i).setImageDrawable(mUnSelectIndicator);
+                    }
+                }
             }
 
             @Override

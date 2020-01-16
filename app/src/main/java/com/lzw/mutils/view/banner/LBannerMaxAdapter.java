@@ -30,6 +30,8 @@ public final class LBannerMaxAdapter extends PagerAdapter {
 
     private View imageView;
 
+    private int clickPos = 0;
+
 
     public LBannerMaxAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener) {
         this.mContext = mContext;
@@ -59,11 +61,20 @@ public final class LBannerMaxAdapter extends PagerAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLBannerListener.itemClick(currentPosition);
+                mLBannerListener.itemClick(clickPos);
             }
         });
         container.addView(imageView);
         return imageView;
+    }
+
+    /**
+     * 设置点击的pos
+     *
+     * @param pos
+     */
+    public void setOnClickPos(int pos) {
+        clickPos = pos;
     }
 
 

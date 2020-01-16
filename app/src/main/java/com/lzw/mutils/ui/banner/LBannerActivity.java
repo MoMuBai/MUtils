@@ -15,6 +15,7 @@ import com.lzw.mutils.view.banner.LBanner;
 import com.lzw.mutils.view.banner.LBannerImageLoader;
 import com.lzw.mutils.view.banner.LBannerImageView;
 import com.lzw.mutils.view.banner.LBannerListener;
+import com.lzw.mutils.view.banner.LBannerStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class LBannerActivity extends AppCompatActivity {
         idList.add(R.drawable.zhizhen1);
         idList.add(R.drawable.ic_launcher_background);
         idList.add(R.drawable.aa);
-        lBanner.setImageLoader(new MyLoader())
+        lBanner.setStyle(LBannerStyle.ViewPagerMaxStyle).setImageLoader(new MyLoader())
                 .setIndicator(R.drawable.ic_select_indicator, R.drawable.ic_unselect_indicator)
                 .setIndicatorGravity(Gravity.CENTER)
                 .setImgData(data)
