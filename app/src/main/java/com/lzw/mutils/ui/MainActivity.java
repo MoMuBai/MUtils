@@ -7,12 +7,20 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.lzw.mutils.R;
 import com.lzw.mutils.tool.To;
 import com.lzw.mutils.tool.permission.CheckPermissionUtils;
 import com.lzw.mutils.tool.permission.PermissionCallBack;
+import com.lzw.mutils.ui.banner.LBannerActivity;
+import com.lzw.mutils.ui.camera.CameraActivity;
+import com.lzw.mutils.view.banner.LBanner;
+import com.lzw.mutils.view.banner.LBannerImageLoader;
+import com.lzw.mutils.view.banner.LBannerStyle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
+    }
 
     /**
      * 申请权限
@@ -73,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         CheckPermissionUtils.getInstance(this).permissionsResult(requestCode, permissions, grantResults);//这边只需要将回调参数传递到CheckPermissionUtils就可以
     }
 
-    public void goCamera(View view) {
-        startActivity(new Intent(this, CameraActivity.class));
+    public void banner(View view) {
+        startActivity(new Intent(this, LBannerActivity.class));
     }
 }

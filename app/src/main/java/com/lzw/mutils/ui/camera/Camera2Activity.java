@@ -1,4 +1,4 @@
-package com.lzw.mutils.ui;
+package com.lzw.mutils.ui.camera;
 
 import android.Manifest;
 import android.annotation.SuppressLint;

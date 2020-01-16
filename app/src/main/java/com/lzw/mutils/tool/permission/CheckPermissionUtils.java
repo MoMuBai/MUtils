@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Author: lzw
  * Date: 2019-10-22
- * Description: This is PhotoGetUtil
+ * Description: This is CheckPermissionUtils
  */
 public class CheckPermissionUtils {
 
