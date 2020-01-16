@@ -16,7 +16,7 @@ import java.util.List;
  * date   :2020-01-16-10:39
  * desc   :
  */
-public class LBannerMaxAdapter extends PagerAdapter {
+public final class LBannerMaxAdapter extends PagerAdapter {
 
     private List mData;
 
@@ -26,12 +26,15 @@ public class LBannerMaxAdapter extends PagerAdapter {
 
     private LBannerImageLoader mLBannerImageLoader;
 
+    private LBannerListener mLBannerListener;
+
     private View imageView;
 
 
-    public LBannerMaxAdapter(Context mContext, LBannerImageLoader lBannerImageLoader, List mData) {
+    public LBannerMaxAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener) {
         this.mContext = mContext;
         this.mLBannerImageLoader = lBannerImageLoader;
+        this.mLBannerListener = lBannerListener;
         this.mData = mData;
     }
 
@@ -48,9 +51,17 @@ public class LBannerMaxAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         imageView = mLBannerImageLoader.createLoadView();
+        if (null == imageView) {
+            imageView = new ImageView(mContext);
+        }
         currentPosition = position % mData.size();
-        Log.d("lzwww", "code1: " + imageView.hashCode());
-        mLBannerImageLoader.loadData(imageView, mData.get(currentPosition));
+        mLBannerImageLoader.showLoadView(imageView, mData.get(currentPosition));
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLBannerListener.itemClick(currentPosition);
+            }
+        });
         container.addView(imageView);
         return imageView;
     }

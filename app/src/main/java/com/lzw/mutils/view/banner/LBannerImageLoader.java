@@ -10,7 +10,7 @@ import android.widget.ImageView;
  */
 public interface LBannerImageLoader<T, V extends View> {
 
-    void loadData(V imageView, T path);
+    void showLoadView(V imageView, T path);
 
     V createLoadView();
 }

@@ -6,7 +6,7 @@ package com.lzw.mutils.view.banner;
  * desc   :
  */
 public enum LBannerStyle {
-    ViewPagerHeadFootStyle,
+    ViewPagerStyle,
     ViewPagerMaxStyle,
     RecyclerViewStyle;
 }

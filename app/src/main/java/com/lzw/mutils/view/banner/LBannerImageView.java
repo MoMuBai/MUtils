@@ -3,6 +3,7 @@ package com.lzw.mutils.view.banner;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 
 /**
@@ -10,7 +11,7 @@ import android.widget.ImageView;
  * date   :2020-01-16-15:00
  * desc   :
  */
-public class LBannerImageView extends android.support.v7.widget.AppCompatImageView {
+public class LBannerImageView extends View {
     public LBannerImageView(Context context) {
         super(context);
     }

@@ -2,6 +2,7 @@ package com.lzw.mutils.view.banner;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,7 +16,7 @@ import java.util.List;
  * date   :2020-01-15-16:22
  * desc   :
  */
-public class LBannerHeadFootAdapter extends PagerAdapter {
+public final class LBannerHeadFootAdapter extends PagerAdapter {
 
     private List mData;
 
@@ -25,8 +26,14 @@ public class LBannerHeadFootAdapter extends PagerAdapter {
 
     private View imageView;
 
-    public LBannerHeadFootAdapter(Context mContext, LBannerImageLoader lBannerImageLoader, List mData) {
+    private LBannerListener mLBannerListener;
+
+    private int mCurrentPos;
+
+
+    public LBannerHeadFootAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener) {
         this.mContext = mContext;
+        this.mLBannerListener = lBannerListener;
         this.mLBannerImageLoader = lBannerImageLoader;
         this.mData = mData;
     }
@@ -42,9 +49,26 @@ public class LBannerHeadFootAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
         imageView = mLBannerImageLoader.createLoadView();
-        mLBannerImageLoader.loadData(imageView, mData.get(position));
+        if (null == imageView) {
+            imageView = new ImageView(mContext);
+        }
+        mLBannerImageLoader.showLoadView(imageView, mData.get(position));
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentPos = position;
+                if (mCurrentPos == 0) {
+                    mCurrentPos = mData.size() - 2;
+                } else if (mCurrentPos == mData.size() - 1) {
+                    mCurrentPos = 1;
+                }
+                if (mCurrentPos >= 1) {
+                    mLBannerListener.itemClick(mCurrentPos - 1);
+                }
+            }
+        });
         container.addView(imageView);
         return imageView;
     }

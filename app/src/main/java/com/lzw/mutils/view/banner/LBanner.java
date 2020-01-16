@@ -1,13 +1,20 @@
 package com.lzw.mutils.view.banner;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.lzw.mutils.R;
+import com.lzw.mutils.tool.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +27,8 @@ import java.util.List;
 public class LBanner extends FrameLayout {
 
     private ViewPager mViewPager;
+    private LinearLayout mIndicatorGroup;
+    private List<ImageView> mIndicatorView;
     private LBannerHeadFootAdapter mLBannerHeadFootAdapter;
     private LBannerMaxAdapter mLBannerMaxAdapter;
     private Context mContext;
@@ -27,8 +36,11 @@ public class LBanner extends FrameLayout {
     private List mData;
     private LayoutInflater mLayoutInflater;
     private LBannerImageLoader mLBannerImageLoader;
-    private LBannerStyle mBannerStyle = LBannerStyle.ViewPagerHeadFootStyle;
+    private LBannerStyle mBannerStyle = LBannerStyle.ViewPagerStyle;//默认是ViewPager的加头加尾显示
     private int mLayout;
+    private Drawable mSelectIndicator, mUnSelectIndicator;
+    private int mIndicatorGravity = Gravity.CENTER;//默认是居中显示
+    private LBannerListener mLBannerListener;
 
 
     public LBanner(Context context) {
@@ -44,6 +56,11 @@ public class LBanner extends FrameLayout {
         init(context);
     }
 
+    public LBanner setLBannerListener(LBannerListener lBannerListener) {
+        this.mLBannerListener = lBannerListener;
+        return this;
+    }
+
     /**
      * 初始化
      *
@@ -51,10 +68,159 @@ public class LBanner extends FrameLayout {
      */
     private void init(Context context) {
         mData = new ArrayList();
+        mIndicatorView = new ArrayList();
         mContext = context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayout = R.layout.layout_viewpager_banner;
     }
+
+
+    /**
+     * 设置指示器
+     *
+     * @param selectDrawable
+     * @param unSelectDrawable
+     */
+    private void setDrawableIndicator(Drawable selectDrawable, Drawable unSelectDrawable) {
+        mSelectIndicator = selectDrawable;
+        mUnSelectIndicator = unSelectDrawable;
+    }
+
+
+    /**
+     * 处理数据
+     *
+     * @param data
+     */
+    private void buildRecyclerData(List data) {
+        mData.clear();
+        mData.addAll(data);
+    }
+
+    /**
+     * 处理数据
+     *
+     * @param data
+     */
+    private void buildMaxViewPagerData(List data) {
+        mData.clear();
+        mData.addAll(data);
+    }
+
+    /**
+     * 处理数据
+     *
+     * @param data
+     */
+    private void buildViewPagerData(List data) {
+        mData.clear();
+        mData.add(0, data.get(data.size() - 1));
+        for (int i = 0; i < data.size(); i++) {
+            mData.add(i + 1, data.get(i));
+        }
+        mData.add(data.size() + 1, data.get(0));
+    }
+
+    /**
+     * 处理ViewPager相关
+     */
+    private void buildViewPager() {
+        View inflate = mLayoutInflater.inflate(mLayout, this);
+        mViewPager = inflate.findViewById(R.id.view_pager);
+        mIndicatorGroup = inflate.findViewById(R.id.layout_indicator);
+        for (int i = 0; i < mData.size() - 2; i++) {
+            ImageView imageView = new ImageView(mContext);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtils.dp2px(8), ScreenUtils.dp2px(8));
+            imageView.setLayoutParams(layoutParams);
+            layoutParams.bottomMargin = ScreenUtils.dp2px(8);
+            layoutParams.topMargin = ScreenUtils.dp2px(8);
+            layoutParams.rightMargin = ScreenUtils.dp2px(8);
+            if (i == 0) {
+                imageView.setImageDrawable(mSelectIndicator);
+            } else {
+                imageView.setImageDrawable(mUnSelectIndicator);
+            }
+            mIndicatorGroup.setGravity(mIndicatorGravity);
+            mIndicatorView.add(imageView);
+            mIndicatorGroup.addView(imageView);
+        }
+        mLBannerHeadFootAdapter = new LBannerHeadFootAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener);
+        mViewPager.setAdapter(mLBannerHeadFootAdapter);
+        mCurrentPos = 1;
+        mViewPager.setCurrentItem(mCurrentPos);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mCurrentPos = position;
+                if (mCurrentPos == 0) {
+                    mCurrentPos = mData.size() - 2;
+                } else if (mCurrentPos == mData.size() - 1) {
+                    mCurrentPos = 1;
+                }
+                if (mCurrentPos >= 1) {
+                    for (int i = 0; i < mIndicatorView.size(); i++) {
+                        if (mCurrentPos - 1 == i) {
+                            mIndicatorView.get(i).setImageDrawable(mSelectIndicator);
+                        } else {
+                            mIndicatorView.get(i).setImageDrawable(mUnSelectIndicator);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                //验证当前的滑动是否结束
+                if (state == ViewPager.SCROLL_STATE_IDLE) {
+                    mViewPager.setCurrentItem(mCurrentPos, false);//切换，不要动画效果
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 处理MaxViewPager相关
+     */
+    private void buildMaxViewPager() {
+        View inflate = mLayoutInflater.inflate(mLayout, this);
+        mViewPager = inflate.findViewById(R.id.view_pager);
+        mLBannerMaxAdapter = new LBannerMaxAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener);
+        mViewPager.setAdapter(mLBannerMaxAdapter);
+        mViewPager.setCurrentItem(mData.size() * 10000);//取一个较大值
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mCurrentPos = position % mData.size();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
+
+    /**
+     * 处理RecyclerView相关
+     */
+    private void buildRecyclerView() {
+
+    }
+
+
+    //******************************对面暴露的方法************************************
 
 
     /**
@@ -68,9 +234,47 @@ public class LBanner extends FrameLayout {
         return this;
     }
 
+    /**
+     * 设置指示器
+     *
+     * @param selectIndicator
+     * @param unSelectIndicator
+     * @return
+     */
+    public LBanner setIndicator(int selectIndicator, int unSelectIndicator) {
+        Resources resources = mContext.getResources();
+        Drawable selectDrawable = resources.getDrawable(selectIndicator);
+        Drawable unSelectDrawable = resources.getDrawable(unSelectIndicator);
+        setDrawableIndicator(selectDrawable, unSelectDrawable);
+        return this;
+    }
 
     /**
-     * 设置自己的图片加载样式
+     * 设置指示器的位置，默认居中显示
+     *
+     * @param gravity
+     * @return
+     */
+    public LBanner setIndicatorGravity(int gravity) {
+        mIndicatorGravity = gravity;
+        return this;
+    }
+
+    /**
+     * 设置指示器
+     *
+     * @param selectIndicator
+     * @param unSelectIndicator
+     * @return
+     */
+    public LBanner setIndicator(Drawable selectIndicator, Drawable unSelectIndicator) {
+        setDrawableIndicator(selectIndicator, unSelectIndicator);
+        return this;
+    }
+
+
+    /**
+     * 设置自己的图片加载方式，如果不设置默认采用ViewPager的最大值方式
      *
      * @param loader
      * @return
@@ -88,24 +292,16 @@ public class LBanner extends FrameLayout {
      */
     public LBanner setImgData(List data) {
         if (null != data && data.size() > 0) {
-            if (mBannerStyle == LBannerStyle.ViewPagerHeadFootStyle) {
-                mData.clear();
-                mData.add(0, data.get(data.size() - 1));
-                for (int i = 0; i < data.size(); i++) {
-                    mData.add(i + 1, data.get(i));
-                }
-                mData.add(data.size() + 1, data.get(0));
-            } else if (mBannerStyle == LBannerStyle.ViewPagerMaxStyle) {
-                mData.clear();
-                mData.addAll(data);
-            } else if (mBannerStyle == LBannerStyle.RecyclerViewStyle) {
-                mData.clear();
-                mData.addAll(data);
+            if (mBannerStyle == LBannerStyle.RecyclerViewStyle) {//RecyclerView实现方式
+                buildRecyclerData(data);
+            } else if (mBannerStyle == LBannerStyle.ViewPagerMaxStyle) {//ViewPager最大值实现方式
+                buildMaxViewPagerData(data);
+            } else {//默认是ViewPager加头加尾实现方式
+                buildViewPagerData(data);
             }
         }
         return this;
     }
-
 
     /**
      * 开始构建
@@ -113,62 +309,15 @@ public class LBanner extends FrameLayout {
      * @return
      */
     public LBanner build() {
-        if (mBannerStyle == LBannerStyle.ViewPagerHeadFootStyle) {
-            View inflate = mLayoutInflater.inflate(mLayout, this);
-            mViewPager = inflate.findViewById(R.id.view_pager);
-            mLBannerHeadFootAdapter = new LBannerHeadFootAdapter(mContext, mLBannerImageLoader, mData);
-            mViewPager.setAdapter(mLBannerHeadFootAdapter);
-            mCurrentPos = 1;
-            mViewPager.setCurrentItem(mCurrentPos);
-            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    mCurrentPos = position;
-                    if (mCurrentPos == 0) {
-                        mCurrentPos = mData.size() - 2;
-                    } else if (mCurrentPos == mData.size() - 1) {
-                        mCurrentPos = 1;
-                    }
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-                    //验证当前的滑动是否结束
-                    if (state == ViewPager.SCROLL_STATE_IDLE) {
-                        mViewPager.setCurrentItem(mCurrentPos, false);//切换，不要动画效果
-                    }
-                }
-            });
-        } else if (mBannerStyle == LBannerStyle.ViewPagerMaxStyle) {
-            View inflate = mLayoutInflater.inflate(mLayout, this);
-            mViewPager = inflate.findViewById(R.id.view_pager);
-            mLBannerMaxAdapter = new LBannerMaxAdapter(mContext, mLBannerImageLoader, mData);
-            mViewPager.setAdapter(mLBannerMaxAdapter);
-            mViewPager.setCurrentItem(mData.size() * 1000);
-            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                }
-
-                @Override
-                public void onPageSelected(int position) {
-                    mCurrentPos = position % mData.size();
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-
-                }
-            });
-        } else if (mBannerStyle == LBannerStyle.RecyclerViewStyle) {
-
+        if (mBannerStyle == LBannerStyle.RecyclerViewStyle) {//RecyclerView实现方式
+            buildRecyclerView();
+        } else if (mBannerStyle == LBannerStyle.ViewPagerMaxStyle) {//ViewPager最大值的实现方式
+            buildMaxViewPager();
+        } else {//这边默认如果不写的话会去使用ViewPager加头加尾的实现方式
+            buildViewPager();
         }
         return this;
     }
+
+
 }
