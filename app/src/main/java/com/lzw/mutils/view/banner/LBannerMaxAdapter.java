@@ -32,17 +32,20 @@ public final class LBannerMaxAdapter extends PagerAdapter {
 
     private int clickPos = 0;
 
+    private boolean mLoop;
 
-    public LBannerMaxAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener) {
+
+    public LBannerMaxAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener, boolean mLoop) {
         this.mContext = mContext;
         this.mLBannerImageLoader = lBannerImageLoader;
         this.mLBannerListener = lBannerListener;
         this.mData = mData;
+        this.mLoop = mLoop;
     }
 
     @Override
     public int getCount() {
-        return Integer.MAX_VALUE / 2;
+        return mLoop ? Integer.MAX_VALUE / 2 : mData.size();
     }
 
     @Override
@@ -56,7 +59,11 @@ public final class LBannerMaxAdapter extends PagerAdapter {
         if (null == imageView) {
             imageView = new ImageView(mContext);
         }
-        currentPosition = position % mData.size();
+        if (mLoop) {
+            currentPosition = position % mData.size();
+        } else {
+            currentPosition = position;
+        }
         mLBannerImageLoader.showLoadView(imageView, mData.get(currentPosition));
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -30,12 +30,15 @@ public final class LBannerHeadFootAdapter extends PagerAdapter {
 
     private int mCurrentPos;
 
+    private boolean mLoop;
 
-    public LBannerHeadFootAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener) {
+
+    public LBannerHeadFootAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener, boolean mLoop) {
         this.mContext = mContext;
         this.mLBannerListener = lBannerListener;
         this.mLBannerImageLoader = lBannerImageLoader;
         this.mData = mData;
+        this.mLoop = mLoop;
     }
 
     @Override
@@ -59,13 +62,17 @@ public final class LBannerHeadFootAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 mCurrentPos = position;
-                if (mCurrentPos == 0) {
-                    mCurrentPos = mData.size() - 2;
-                } else if (mCurrentPos == mData.size() - 1) {
-                    mCurrentPos = 1;
-                }
-                if (mCurrentPos >= 1) {
-                    mLBannerListener.itemClick(mCurrentPos - 1);
+                if (mLoop) {
+                    if (mCurrentPos == 0) {
+                        mCurrentPos = mData.size() - 2;
+                    } else if (mCurrentPos == mData.size() - 1) {
+                        mCurrentPos = 1;
+                    }
+                    if (mCurrentPos >= 1) {
+                        mLBannerListener.itemClick(mCurrentPos - 1);
+                    }
+                } else {
+                    mLBannerListener.itemClick(mCurrentPos);
                 }
             }
         });

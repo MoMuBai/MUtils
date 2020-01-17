@@ -1,7 +1,9 @@
 package com.lzw.mutils.ui.banner;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -48,9 +50,13 @@ public class LBannerActivity extends AppCompatActivity {
         idList.add(R.drawable.zhizhen1);
         idList.add(R.drawable.ic_launcher_background);
         idList.add(R.drawable.aa);
-        lBanner.setStyle(LBannerStyle.ViewPagerMaxStyle).setImageLoader(new MyLoader())
+        lBanner.setStyle(LBannerStyle.ViewPagerMaxStyle)
+                .setImageLoader(new MyLoader())
                 .setIndicator(R.drawable.ic_select_indicator, R.drawable.ic_unselect_indicator)
                 .setIndicatorGravity(Gravity.CENTER)
+                .setLoop(false)
+                .setIndicatorSize(8)
+                .setIndicatorMargin(0, 0, 8, 12)
                 .setImgData(data)
                 .setLBannerListener(new LBannerListener() {
                     @Override
@@ -59,7 +65,6 @@ public class LBannerActivity extends AppCompatActivity {
                     }
                 })
                 .build();
-
     }
 
 

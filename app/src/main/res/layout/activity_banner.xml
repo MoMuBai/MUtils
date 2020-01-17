@@ -7,5 +7,6 @@
     <com.lzw.mutils.view.banner.LBanner
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="250dp" />
+
 </LinearLayout>

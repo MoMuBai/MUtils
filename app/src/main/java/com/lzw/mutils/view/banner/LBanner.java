@@ -3,15 +3,19 @@ package com.lzw.mutils.view.banner;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.lzw.mutils.R;
 import com.lzw.mutils.tool.ScreenUtils;
@@ -26,7 +30,9 @@ import java.util.List;
  */
 public class LBanner extends FrameLayout {
 
-    private ViewPager mViewPager;
+    private boolean mLoop = true;//是否可以无限制滑动，默认为true
+
+    private LBannerViewPager mViewPager;
     private LinearLayout mIndicatorGroup;
     private List<ImageView> mIndicatorView;
     private LBannerHeadFootAdapter mLBannerHeadFootAdapter;
@@ -39,7 +45,19 @@ public class LBanner extends FrameLayout {
     private LBannerStyle mBannerStyle = LBannerStyle.ViewPagerStyle;//默认是ViewPager的加头加尾显示
     private int mLayout;
     private Drawable mSelectIndicator, mUnSelectIndicator;
-    private int mIndicatorGravity = Gravity.CENTER;//默认是居中显示
+    private int mIndicatorSize = ScreenUtils.dp2px(8);
+
+    private int mIndicatorLeftMargin = 0;
+    private int mIndicatorRightMargin = ScreenUtils.dp2px(8);
+    private int mIndicatorTopMargin = 0;
+    private int mIndicatorBottomMargin = ScreenUtils.dp2px(8);
+
+    private int mIndicatorGroupLeftMargin = 0;
+    private int mIndicatorGroupRightMargin = 0;
+    private int mIndicatorGroupTopMargin = 0;
+    private int mIndicatorGroupBottomMargin = 0;
+
+    private int mIndicatorGravity = Gravity.CENTER_HORIZONTAL;//默认是居中显示
     private LBannerListener mLBannerListener;
 
 
@@ -114,11 +132,15 @@ public class LBanner extends FrameLayout {
      */
     private void buildViewPagerData(List data) {
         mData.clear();
-        mData.add(0, data.get(data.size() - 1));
-        for (int i = 0; i < data.size(); i++) {
-            mData.add(i + 1, data.get(i));
+        if (mLoop) {
+            mData.add(0, data.get(data.size() - 1));
+            for (int i = 0; i < data.size(); i++) {
+                mData.add(i + 1, data.get(i));
+            }
+            mData.add(data.size() + 1, data.get(0));
+        } else {
+            mData.addAll(data);
         }
-        mData.add(data.size() + 1, data.get(0));
     }
 
     /**
@@ -128,26 +150,18 @@ public class LBanner extends FrameLayout {
         View inflate = mLayoutInflater.inflate(mLayout, this);
         mViewPager = inflate.findViewById(R.id.view_pager);
         mIndicatorGroup = inflate.findViewById(R.id.layout_indicator);
-        for (int i = 0; i < mData.size() - 2; i++) {
-            ImageView imageView = new ImageView(mContext);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtils.dp2px(8), ScreenUtils.dp2px(8));
-            imageView.setLayoutParams(layoutParams);
-            layoutParams.bottomMargin = ScreenUtils.dp2px(8);
-            layoutParams.topMargin = ScreenUtils.dp2px(8);
-            layoutParams.rightMargin = ScreenUtils.dp2px(8);
-            if (i == 0) {
-                imageView.setImageDrawable(mSelectIndicator);
-            } else {
-                imageView.setImageDrawable(mUnSelectIndicator);
-            }
-            mIndicatorGroup.setGravity(mIndicatorGravity);
-            mIndicatorView.add(imageView);
-            mIndicatorGroup.addView(imageView);
-        }
-        mLBannerHeadFootAdapter = new LBannerHeadFootAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener);
+        mLBannerHeadFootAdapter = new LBannerHeadFootAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener, mLoop);
         mViewPager.setAdapter(mLBannerHeadFootAdapter);
-        mCurrentPos = 1;
+        int realSize = 0;
+        if (mLoop) {
+            mCurrentPos = 1;
+            realSize = mData.size() - 2;
+        } else {
+            mCurrentPos = 0;
+            realSize = mData.size();
+        }
         mViewPager.setCurrentItem(mCurrentPos);
+        buildIndicator(realSize);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -157,14 +171,24 @@ public class LBanner extends FrameLayout {
             @Override
             public void onPageSelected(int position) {
                 mCurrentPos = position;
-                if (mCurrentPos == 0) {
-                    mCurrentPos = mData.size() - 2;
-                } else if (mCurrentPos == mData.size() - 1) {
-                    mCurrentPos = 1;
-                }
-                if (mCurrentPos >= 1) {
+                if (mLoop) {
+                    if (mCurrentPos == 0) {
+                        mCurrentPos = mData.size() - 2;
+                    } else if (mCurrentPos == mData.size() - 1) {
+                        mCurrentPos = 1;
+                    }
+                    if (mCurrentPos >= 1) {
+                        for (int i = 0; i < mIndicatorView.size(); i++) {
+                            if (mCurrentPos - 1 == i) {
+                                mIndicatorView.get(i).setImageDrawable(mSelectIndicator);
+                            } else {
+                                mIndicatorView.get(i).setImageDrawable(mUnSelectIndicator);
+                            }
+                        }
+                    }
+                } else {
                     for (int i = 0; i < mIndicatorView.size(); i++) {
-                        if (mCurrentPos - 1 == i) {
+                        if (mCurrentPos == i) {
                             mIndicatorView.get(i).setImageDrawable(mSelectIndicator);
                         } else {
                             mIndicatorView.get(i).setImageDrawable(mUnSelectIndicator);
@@ -175,9 +199,11 @@ public class LBanner extends FrameLayout {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                //验证当前的滑动是否结束
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    mViewPager.setCurrentItem(mCurrentPos, false);//切换，不要动画效果
+                if (mLoop) {
+                    //验证当前的滑动是否结束
+                    if (state == ViewPager.SCROLL_STATE_IDLE) {
+                        mViewPager.setCurrentItem(mCurrentPos, false);//切换，不要动画效果
+                    }
                 }
             }
         });
@@ -191,25 +217,12 @@ public class LBanner extends FrameLayout {
         View inflate = mLayoutInflater.inflate(mLayout, this);
         mViewPager = inflate.findViewById(R.id.view_pager);
         mIndicatorGroup = inflate.findViewById(R.id.layout_indicator);
-        for (int i = 0; i < mData.size(); i++) {
-            ImageView imageView = new ImageView(mContext);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ScreenUtils.dp2px(8), ScreenUtils.dp2px(8));
-            imageView.setLayoutParams(layoutParams);
-            layoutParams.bottomMargin = ScreenUtils.dp2px(8);
-            layoutParams.topMargin = ScreenUtils.dp2px(8);
-            layoutParams.rightMargin = ScreenUtils.dp2px(8);
-            if (i == 0) {
-                imageView.setImageDrawable(mSelectIndicator);
-            } else {
-                imageView.setImageDrawable(mUnSelectIndicator);
-            }
-            mIndicatorGroup.setGravity(mIndicatorGravity);
-            mIndicatorView.add(imageView);
-            mIndicatorGroup.addView(imageView);
-        }
-        mLBannerMaxAdapter = new LBannerMaxAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener);
+        buildIndicator(mData.size());
+        mLBannerMaxAdapter = new LBannerMaxAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener, mLoop);
         mViewPager.setAdapter(mLBannerMaxAdapter);
-        mViewPager.setCurrentItem(mData.size() * 10000);//取一个较大值
+        if (mLoop) {
+            mViewPager.setCurrentItem(mData.size() * 10000);//取一个较大值
+        }
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -218,7 +231,11 @@ public class LBanner extends FrameLayout {
 
             @Override
             public void onPageSelected(int position) {
-                mCurrentPos = position % mData.size();
+                if (mLoop) {
+                    mCurrentPos = position % mData.size();
+                } else {
+                    mCurrentPos = position;
+                }
                 mLBannerMaxAdapter.setOnClickPos(mCurrentPos);
                 for (int i = 0; i < mIndicatorView.size(); i++) {
                     if (mCurrentPos == i) {
@@ -236,6 +253,35 @@ public class LBanner extends FrameLayout {
         });
     }
 
+    /**
+     * 生成指示器
+     *
+     * @param size
+     */
+    private void buildIndicator(int size) {
+        for (int i = 0; i < size; i++) {
+            ImageView imageView = new ImageView(mContext);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(mIndicatorSize, mIndicatorSize);
+            imageView.setLayoutParams(layoutParams);
+            layoutParams.bottomMargin = mIndicatorBottomMargin;
+            layoutParams.topMargin = mIndicatorTopMargin;
+            layoutParams.rightMargin = mIndicatorRightMargin;
+            layoutParams.leftMargin = mIndicatorLeftMargin;
+            if (i == 0) {
+                imageView.setImageDrawable(mSelectIndicator);
+            } else {
+                imageView.setImageDrawable(mUnSelectIndicator);
+            }
+            mIndicatorGroup.setGravity(mIndicatorGravity);
+            mIndicatorView.add(imageView);
+            mIndicatorGroup.addView(imageView);
+        }
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mIndicatorGroup.getLayoutParams();
+        layoutParams.leftMargin = mIndicatorGroupLeftMargin;
+        layoutParams.rightMargin = mIndicatorGroupRightMargin;
+        layoutParams.topMargin = mIndicatorGroupTopMargin;
+        layoutParams.bottomMargin = mIndicatorGroupBottomMargin;
+    }
 
     /**
      * 处理RecyclerView相关
@@ -247,6 +293,64 @@ public class LBanner extends FrameLayout {
 
     //******************************对面暴露的方法************************************
 
+
+    /**
+     * 设置是否可以无限滑动
+     *
+     * @param mLoop
+     * @return
+     */
+    public LBanner setLoop(boolean mLoop) {
+        this.mLoop = mLoop;
+        return this;
+    }
+
+    /**
+     * 设置指示器的Size
+     *
+     * @param size
+     * @return
+     */
+    public LBanner setIndicatorSize(int size) {
+        this.mIndicatorSize = ScreenUtils.dp2px(size);
+        return this;
+    }
+
+
+    /**
+     * 设置指示器之间的的margin
+     *
+     * @param leftMargin
+     * @param topMargin
+     * @param rightMargin
+     * @param bottomMargin
+     * @return
+     */
+    public LBanner setIndicatorMargin(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+        this.mIndicatorLeftMargin = ScreenUtils.dp2px(leftMargin);
+        this.mIndicatorRightMargin = ScreenUtils.dp2px(rightMargin);
+        this.mIndicatorTopMargin = ScreenUtils.dp2px(topMargin);
+        this.mIndicatorBottomMargin = ScreenUtils.dp2px(bottomMargin);
+        return this;
+    }
+
+
+    /**
+     * 设置指示器组的的margin
+     *
+     * @param leftMargin
+     * @param topMargin
+     * @param rightMargin
+     * @param bottomMargin
+     * @return
+     */
+    public LBanner setIndicatorGroupMargin(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
+        this.mIndicatorGroupLeftMargin = ScreenUtils.dp2px(leftMargin);
+        this.mIndicatorGroupRightMargin = ScreenUtils.dp2px(rightMargin);
+        this.mIndicatorGroupTopMargin = ScreenUtils.dp2px(topMargin);
+        this.mIndicatorGroupBottomMargin = ScreenUtils.dp2px(bottomMargin);
+        return this;
+    }
 
     /**
      * 设置是RecyclerView还是ViewPager来支持的
@@ -281,6 +385,9 @@ public class LBanner extends FrameLayout {
      * @return
      */
     public LBanner setIndicatorGravity(int gravity) {
+        if (gravity == Gravity.CENTER || gravity == Gravity.CENTER_VERTICAL) {
+            gravity = Gravity.CENTER_HORIZONTAL;
+        }
         mIndicatorGravity = gravity;
         return this;
     }
@@ -343,6 +450,4 @@ public class LBanner extends FrameLayout {
         }
         return this;
     }
-
-
 }
