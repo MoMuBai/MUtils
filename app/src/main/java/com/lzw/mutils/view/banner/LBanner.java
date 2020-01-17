@@ -30,6 +30,8 @@ import java.util.List;
  */
 public class LBanner extends FrameLayout {
 
+    private boolean mAutoPlay = true;//是否自动播放，默认为true
+    private int mDelayTime = 3000;//自动播放的间隔时间，默认3000毫秒
     private boolean mLoop = true;//是否可以无限制滑动，默认为true
     private boolean mShowIndicator = true;//是否显示指示器
     private LBannerPageChangeListener mLBannerPageChangeListener;
@@ -308,8 +310,61 @@ public class LBanner extends FrameLayout {
     }
 
 
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            return false;
+        }
+    });
+    private final Runnable task = new Runnable() {
+        @Override
+        public void run() {
+            if (mLoop && mAutoPlay) {
+                mViewPager.setCurrentItem(mRealCurrentPos);
+                handler.postDelayed(task, mDelayTime);
+            }
+        }
+    };
+
+
     //******************************对面暴露的方法************************************
 
+    /**
+     * 设置是否自动播放
+     *
+     * @param autoPlay
+     * @return
+     */
+    public LBanner setAutoPlay(boolean autoPlay) {
+        this.mAutoPlay = autoPlay;
+        return this;
+    }
+
+    /**
+     * 设置自动轮播的间隔时间
+     *
+     * @param delayTime
+     * @return
+     */
+    public LBanner setDelayTime(int delayTime) {
+        this.mDelayTime = delayTime;
+        return this;
+    }
+
+    /**
+     * 设置自动播放
+     */
+    public void startAutoPlay() {
+        handler.removeCallbacks(task);
+        handler.postDelayed(task, mDelayTime);
+    }
+
+    /**
+     * 设置停止播放
+     */
+    public void stopAutoPlay() {
+        handler.removeCallbacks(task);
+    }
 
     /**
      * 设置是否可以无限滑动

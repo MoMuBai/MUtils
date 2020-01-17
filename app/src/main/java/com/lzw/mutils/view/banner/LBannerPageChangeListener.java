@@ -6,5 +6,5 @@ package com.lzw.mutils.view.banner;
  * desc   :
  */
 public interface LBannerPageChangeListener {
-    void onPageChange(int currentPos);
+    void onPageChange(int position);
 }

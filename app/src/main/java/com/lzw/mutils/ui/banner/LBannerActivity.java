@@ -45,9 +45,9 @@ public class LBannerActivity extends AppCompatActivity {
 
         data = new ArrayList<>();
         idList = new ArrayList<>();
-        data.add("http://c.hiphotos.baidu.com/zhidao/pic/item/d009b3de9c82d1587e249850820a19d8bd3e42a9.jpg");
-        data.add("http://i1.sinaimg.cn/ent/d/2008-06-04/U105P28T3D2048907F326DT20080604225106.jpg");
-        data.add("http://dl.ppt123.net/pptbj/51/20181115/mzj0ghw2xo2.jpg");
+        data.add("http://c.hiphotos.baidu.com/zhidao/pic/item/d009b3de9c82d1587e249850820a19d8bd3e42a9.jpg");//1
+        data.add("http://i1.sinaimg.cn/ent/d/2008-06-04/U105P28T3D2048907F326DT20080604225106.jpg");//2
+        data.add("http://dl.ppt123.net/pptbj/51/20181115/mzj0ghw2xo2.jpg");//3
         idList.add(R.drawable.zhizhen1);
         idList.add(R.drawable.ic_launcher_background);
         idList.add(R.drawable.aa);
@@ -60,6 +60,7 @@ public class LBannerActivity extends AppCompatActivity {
                 .setShowIndicator(true)
                 .setLoop(true)
                 .setImgData(data)
+                .setDelayTime(5000)
                 .setLBannerListener(new LBannerListener() {
                     @Override
                     public void itemClick(int pos) {
@@ -68,11 +69,11 @@ public class LBannerActivity extends AppCompatActivity {
                 })
                 .setLBannerPageChangeListener(new LBannerPageChangeListener() {
                     @Override
-                    public void onPageChange(int currentPos) {
-                        Log.d("lzwwww", "onPageChange: " + currentPos);
+                    public void onPageChange(int pos) {
                     }
                 })
                 .build();
+        lBanner.startAutoPlay();
     }
 
 
