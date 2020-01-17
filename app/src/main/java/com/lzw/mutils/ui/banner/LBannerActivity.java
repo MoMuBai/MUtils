@@ -17,6 +17,7 @@ import com.lzw.mutils.view.banner.LBanner;
 import com.lzw.mutils.view.banner.LBannerImageLoader;
 import com.lzw.mutils.view.banner.LBannerImageView;
 import com.lzw.mutils.view.banner.LBannerListener;
+import com.lzw.mutils.view.banner.LBannerPageChangeListener;
 import com.lzw.mutils.view.banner.LBannerStyle;
 
 import java.util.ArrayList;
@@ -50,18 +51,25 @@ public class LBannerActivity extends AppCompatActivity {
         idList.add(R.drawable.zhizhen1);
         idList.add(R.drawable.ic_launcher_background);
         idList.add(R.drawable.aa);
-        lBanner.setStyle(LBannerStyle.ViewPagerMaxStyle)
+        lBanner.setStyle(LBannerStyle.ViewPagerStyle)
                 .setImageLoader(new MyLoader())
                 .setIndicator(R.drawable.ic_select_indicator, R.drawable.ic_unselect_indicator)
                 .setIndicatorGravity(Gravity.CENTER)
-                .setLoop(false)
                 .setIndicatorSize(8)
                 .setIndicatorMargin(0, 0, 8, 12)
+                .setShowIndicator(true)
+                .setLoop(true)
                 .setImgData(data)
                 .setLBannerListener(new LBannerListener() {
                     @Override
                     public void itemClick(int pos) {
                         Toast.makeText(LBannerActivity.this, "点击了：" + pos, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setLBannerPageChangeListener(new LBannerPageChangeListener() {
+                    @Override
+                    public void onPageChange(int currentPos) {
+                        Log.d("lzwwww", "onPageChange: " + currentPos);
                     }
                 })
                 .build();

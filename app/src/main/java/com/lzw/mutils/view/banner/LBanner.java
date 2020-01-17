@@ -31,14 +31,15 @@ import java.util.List;
 public class LBanner extends FrameLayout {
 
     private boolean mLoop = true;//是否可以无限制滑动，默认为true
-
+    private boolean mShowIndicator = true;//是否显示指示器
+    private LBannerPageChangeListener mLBannerPageChangeListener;
     private LBannerViewPager mViewPager;
     private LinearLayout mIndicatorGroup;
     private List<ImageView> mIndicatorView;
     private LBannerHeadFootAdapter mLBannerHeadFootAdapter;
     private LBannerMaxAdapter mLBannerMaxAdapter;
     private Context mContext;
-    private int mCurrentPos;
+    private int mCurrentPos, mRealCurrentPos;
     private List mData;
     private LayoutInflater mLayoutInflater;
     private LBannerImageLoader mLBannerImageLoader;
@@ -76,6 +77,12 @@ public class LBanner extends FrameLayout {
 
     public LBanner setLBannerListener(LBannerListener lBannerListener) {
         this.mLBannerListener = lBannerListener;
+        return this;
+    }
+
+
+    public LBanner setLBannerPageChangeListener(LBannerPageChangeListener lBannerPageChangeListener) {
+        this.mLBannerPageChangeListener = lBannerPageChangeListener;
         return this;
     }
 
@@ -161,7 +168,9 @@ public class LBanner extends FrameLayout {
             realSize = mData.size();
         }
         mViewPager.setCurrentItem(mCurrentPos);
-        buildIndicator(realSize);
+        if (mShowIndicator) {
+            buildIndicator(realSize);
+        }
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -178,6 +187,7 @@ public class LBanner extends FrameLayout {
                         mCurrentPos = 1;
                     }
                     if (mCurrentPos >= 1) {
+                        mRealCurrentPos = mCurrentPos - 1;
                         for (int i = 0; i < mIndicatorView.size(); i++) {
                             if (mCurrentPos - 1 == i) {
                                 mIndicatorView.get(i).setImageDrawable(mSelectIndicator);
@@ -185,8 +195,10 @@ public class LBanner extends FrameLayout {
                                 mIndicatorView.get(i).setImageDrawable(mUnSelectIndicator);
                             }
                         }
+                        mLBannerPageChangeListener.onPageChange(mRealCurrentPos);
                     }
                 } else {
+                    mRealCurrentPos = mCurrentPos;
                     for (int i = 0; i < mIndicatorView.size(); i++) {
                         if (mCurrentPos == i) {
                             mIndicatorView.get(i).setImageDrawable(mSelectIndicator);
@@ -194,6 +206,7 @@ public class LBanner extends FrameLayout {
                             mIndicatorView.get(i).setImageDrawable(mUnSelectIndicator);
                         }
                     }
+                    mLBannerPageChangeListener.onPageChange(mRealCurrentPos);
                 }
             }
 
@@ -217,7 +230,9 @@ public class LBanner extends FrameLayout {
         View inflate = mLayoutInflater.inflate(mLayout, this);
         mViewPager = inflate.findViewById(R.id.view_pager);
         mIndicatorGroup = inflate.findViewById(R.id.layout_indicator);
-        buildIndicator(mData.size());
+        if (mShowIndicator) {
+            buildIndicator(mData.size());
+        }
         mLBannerMaxAdapter = new LBannerMaxAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener, mLoop);
         mViewPager.setAdapter(mLBannerMaxAdapter);
         if (mLoop) {
@@ -236,14 +251,16 @@ public class LBanner extends FrameLayout {
                 } else {
                     mCurrentPos = position;
                 }
-                mLBannerMaxAdapter.setOnClickPos(mCurrentPos);
+                mRealCurrentPos = mCurrentPos;
+                mLBannerMaxAdapter.setOnClickPos(mRealCurrentPos);
                 for (int i = 0; i < mIndicatorView.size(); i++) {
-                    if (mCurrentPos == i) {
+                    if (mRealCurrentPos == i) {
                         mIndicatorView.get(i).setImageDrawable(mSelectIndicator);
                     } else {
                         mIndicatorView.get(i).setImageDrawable(mUnSelectIndicator);
                     }
                 }
+                mLBannerPageChangeListener.onPageChange(mRealCurrentPos);
             }
 
             @Override
@@ -302,6 +319,18 @@ public class LBanner extends FrameLayout {
      */
     public LBanner setLoop(boolean mLoop) {
         this.mLoop = mLoop;
+        return this;
+    }
+
+
+    /**
+     * 设置是否显示指示器
+     *
+     * @param showIndicator
+     * @return
+     */
+    public LBanner setShowIndicator(boolean showIndicator) {
+        this.mShowIndicator = showIndicator;
         return this;
     }
 
