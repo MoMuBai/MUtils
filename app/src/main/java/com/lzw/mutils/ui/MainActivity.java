@@ -16,6 +16,7 @@ import com.lzw.mutils.tool.permission.CheckPermissionUtils;
 import com.lzw.mutils.tool.permission.PermissionCallBack;
 import com.lzw.mutils.ui.banner.LBannerActivity;
 import com.lzw.mutils.ui.camera.CameraActivity;
+import com.lzw.mutils.ui.flow.FlowActivity;
 import com.lzw.mutils.view.banner.LBanner;
 import com.lzw.mutils.view.banner.LBannerImageLoader;
 import com.lzw.mutils.view.banner.LBannerStyle;
@@ -83,5 +84,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void banner(View view) {
         startActivity(new Intent(this, LBannerActivity.class));
+    }
+
+    public void flow(View view) {
+        startActivity(new Intent(this, FlowActivity.class));
     }
 }

@@ -27,6 +27,7 @@
         </activity>
         <activity android:name=".ui.camera.CameraActivity" />
         <activity android:name=".ui.banner.LBannerActivity" />
+        <activity android:name=".ui.flow.FlowActivity"/>
     </application>
 
 </manifest>
