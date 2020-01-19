@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.lzw.mutils.R;
@@ -17,20 +21,42 @@ import com.lzw.mutils.tool.permission.PermissionCallBack;
 import com.lzw.mutils.ui.banner.LBannerActivity;
 import com.lzw.mutils.ui.camera.CameraActivity;
 import com.lzw.mutils.ui.flow.FlowActivity;
+import com.lzw.mutils.ui.splash.SplashActivity;
 import com.lzw.mutils.view.banner.LBanner;
 import com.lzw.mutils.view.banner.LBannerImageLoader;
 import com.lzw.mutils.view.banner.LBannerStyle;
+import com.lzw.mutils.view.time.DateSelectByWindow;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PopupWindow.OnDismissListener {
+
+    private ScrollView root;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        root = findViewById(R.id.root);
+    }
 
+    public void time(View view) {
+        DateSelectByWindow byWindowDate = new DateSelectByWindow.Builder(this)
+                .setScrollToCurrentDate(true)
+                .setYearShow(true)
+                .setTitleText("时间选择")
+                .setHourShow(true)
+                .setCanSelectYear("2000")
+                .setMinuteShow(true)
+                .setOnSelectTimeListener(time -> {
+                    ((TextView) findViewById(R.id.tv_time)).setText(time);
+                })
+                .create();
+        byWindowDate.setOnDismissListener(this);
+        byWindowDate.showAtLocation(root, Gravity.BOTTOM, 0, 0);
     }
 
     /**
@@ -88,5 +114,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void flow(View view) {
         startActivity(new Intent(this, FlowActivity.class));
+    }
+
+    public void splash(View view) {
+        startActivity(new Intent(this, SplashActivity.class));
+    }
+
+
+    @Override
+    public void onDismiss() {
+
     }
 }

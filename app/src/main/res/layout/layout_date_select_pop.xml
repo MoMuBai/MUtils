@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#FFFFFF">
+
+        <RelativeLayout
+            android:id="@+id/layout_title"
+            android:layout_width="match_parent"
+            android:layout_height="52dp">
+
+            <TextView
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:padding="10dp"
+                android:text="取消"
+                android:textColor="#FF787C84"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:padding="10dp"
+                android:text=""
+                android:textColor="#FF1F2633"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:padding="10dp"
+                android:text="确定"
+                android:textColor="#FF56A5F9"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="#FFE7E8E9" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_title"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.lzw.mutils.view.time.wheel.WheelView
+                android:id="@+id/wv_year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:gravityCoefficient="0"
+                app:wheelDividerSize="60dp"
+                app:wheelGravity="left"
+                app:wheelItemCount="2"
+                app:wheelItemSize="60dp"
+                app:wheelTextSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:text="年"
+                android:textColor="#FF787C84"
+                android:textSize="16sp" />
+
+            <com.lzw.mutils.view.time.wheel.WheelView
+                android:id="@+id/wv_month"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:gravityCoefficient="0"
+                app:wheelDividerSize="60dp"
+                app:wheelGravity="left"
+                app:wheelItemCount="2"
+                app:wheelItemSize="60dp"
+                app:wheelTextSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:text="月"
+                android:textColor="#FF787C84"
+                android:textSize="16sp" />
+
+            <com.lzw.mutils.view.time.wheel.WheelView
+                android:id="@+id/wv_day"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:gravityCoefficient="0"
+                app:wheelDividerSize="60dp"
+                app:wheelGravity="left"
+                app:wheelItemCount="2"
+                app:wheelItemSize="60dp"
+                app:wheelTextSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:text="日"
+                android:textColor="#FF787C84"
+                android:textSize="16sp" />
+
+            <com.lzw.mutils.view.time.wheel.WheelView
+                android:id="@+id/wv_hour"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:gravityCoefficient="0"
+                app:wheelDividerSize="60dp"
+                app:wheelGravity="left"
+                app:wheelItemCount="2"
+                app:wheelItemSize="60dp"
+                app:wheelTextSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:text="时"
+                android:textColor="#FF787C84"
+                android:textSize="16sp" />
+
+            <com.lzw.mutils.view.time.wheel.WheelView
+                android:id="@+id/wv_minute"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:gravityCoefficient="0"
+                app:wheelDividerSize="60dp"
+                app:wheelGravity="left"
+                app:wheelItemCount="2"
+                app:wheelItemSize="60dp"
+                app:wheelTextSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_minute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:text="分"
+                android:textColor="#FF787C84"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -73,7 +73,7 @@ public class LBannerActivity extends AppCompatActivity {
                     }
                 })
                 .build();
-        lBanner.startAutoPlay();
+//        lBanner.startAutoPlay();
     }
 
 
