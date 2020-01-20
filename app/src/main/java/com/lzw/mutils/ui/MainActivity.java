@@ -125,4 +125,8 @@ public class MainActivity extends AppCompatActivity implements PopupWindow.OnDis
     public void onDismiss() {
 
     }
+
+    public void ioc(View view) {
+        startActivity(new Intent(this, InjectActivity.class));
+    }
 }
