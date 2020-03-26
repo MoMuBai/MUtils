@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.lzw.mutils.tool.ScreenUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,22 +31,29 @@ public final class LBannerMaxAdapter extends PagerAdapter {
 
     private View imageView;
 
+    private List<View> viewList;
+
     private int clickPos = 0;
 
     private boolean mLoop;
 
+    public void setData(List mData) {
+        this.mData = mData;
+        notifyDataSetChanged();
+    }
 
-    public LBannerMaxAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener, boolean mLoop) {
+    public LBannerMaxAdapter(Context mContext, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener, boolean mLoop) {
         this.mContext = mContext;
         this.mLBannerImageLoader = lBannerImageLoader;
         this.mLBannerListener = lBannerListener;
-        this.mData = mData;
         this.mLoop = mLoop;
+        this.mData = new ArrayList();
+        this.viewList = new ArrayList<>();
     }
 
     @Override
     public int getCount() {
-        return mLoop ? Integer.MAX_VALUE / 2 : mData.size();
+        return mLoop && mData.size() > 0 ? Integer.MAX_VALUE / 2 : mData.size();
     }
 
     @Override
@@ -59,18 +67,22 @@ public final class LBannerMaxAdapter extends PagerAdapter {
         if (null == imageView) {
             imageView = new ImageView(mContext);
         }
-        if (mLoop) {
-            currentPosition = position % mData.size();
-        } else {
-            currentPosition = position;
+        if (mData.size() > 0) {
+            if (mLoop) {
+                currentPosition = position % mData.size();
+            } else {
+                currentPosition = position;
+            }
+            Log.d("lzwwwww", "pos: " + currentPosition);
+            mLBannerImageLoader.showLoadView(imageView, mData.get(currentPosition));
         }
-        mLBannerImageLoader.showLoadView(imageView, mData.get(currentPosition));
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mLBannerListener.itemClick(clickPos);
             }
         });
+        viewList.add(imageView);
         container.addView(imageView);
         return imageView;
     }
@@ -88,5 +100,11 @@ public final class LBannerMaxAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
 //        super.destroyItem(container, position, object);
+        if (mLoop) {
+            currentPosition = position % mData.size();
+        } else {
+            currentPosition = position;
+        }
+        container.removeView(viewList.get(currentPosition));
     }
 }

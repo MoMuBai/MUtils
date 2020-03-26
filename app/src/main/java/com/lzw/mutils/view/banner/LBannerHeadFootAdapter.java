@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.lzw.mutils.tool.ScreenUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,13 +33,17 @@ public final class LBannerHeadFootAdapter extends PagerAdapter {
 
     private boolean mLoop;
 
+    public void setData(List mData) {
+        this.mData = mData;
+        notifyDataSetChanged();
+    }
 
-    public LBannerHeadFootAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener, boolean mLoop) {
+    public LBannerHeadFootAdapter(Context mContext, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener, boolean mLoop) {
         this.mContext = mContext;
         this.mLBannerListener = lBannerListener;
         this.mLBannerImageLoader = lBannerImageLoader;
-        this.mData = mData;
         this.mLoop = mLoop;
+        this.mData = new ArrayList();
     }
 
     @Override
@@ -52,16 +57,19 @@ public final class LBannerHeadFootAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, final int position) {
+    public Object instantiateItem(ViewGroup container, int position) {
         imageView = mLBannerImageLoader.createLoadView();
         if (null == imageView) {
             imageView = new ImageView(mContext);
         }
-        mLBannerImageLoader.showLoadView(imageView, mData.get(position));
+        if (mData.size() > 0) {
+            mLBannerImageLoader.showLoadView(imageView, mData.get(position));
+        }
+        int finalPosition = position;
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCurrentPos = position;
+                mCurrentPos = finalPosition;
                 if (mLoop) {
                     if (mCurrentPos == 0) {
                         mCurrentPos = mData.size() - 2;
