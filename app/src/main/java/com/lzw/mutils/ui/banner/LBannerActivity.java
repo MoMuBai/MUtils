@@ -71,7 +71,7 @@ public class LBannerActivity extends AppCompatActivity {
                 .setIndicatorMargin(0, 0, 8, 12)
                 .setShowIndicator(true)
                 .setLoop(true)
-                .setAutoPlay(true)
+                .setAutoPlay(false)
                 .setDelayTime(3000)
                 .setLBannerListener(new LBannerListener() {
                     @Override
@@ -89,17 +89,17 @@ public class LBannerActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                lBanner.setImgData(idList).show();
-                lBanner.startAutoPlay();
+                lBanner.setImgData(data).show();
+//                lBanner.startAutoPlay();
             }
         }, 3000);
     }
 
 
-    private class MyLoader implements LBannerImageLoader<Integer, ImageView> {
+    private class MyLoader implements LBannerImageLoader<String, ImageView> {
 
         @Override
-        public void showLoadView(ImageView imageView, Integer path) {
+        public void showLoadView(ImageView imageView, String path) {
             Glide.with(LBannerActivity.this).load(path).centerCrop().into(imageView);
         }
 

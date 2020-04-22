@@ -223,9 +223,12 @@ public class LBanner extends FrameLayout {
     /**
      * 处理MaxViewPager相关
      */
-    private void buildMaxViewPager() {
-        mLBannerMaxAdapter = new LBannerMaxAdapter(mContext, mLBannerImageLoader, mLBannerListener, mLoop);
+    private void buildMaxViewPager(List mData) {
+        mLBannerMaxAdapter = new LBannerMaxAdapter(mContext, mData, mLBannerImageLoader, mLBannerListener, mLoop);
         mViewPager.setAdapter(mLBannerMaxAdapter);
+        if (mLoop) {
+            mViewPager.setCurrentItem(50);//取一个较大值，viewpager为0的时候，本身无法向左滑动，这边设置一个大的值
+        }
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -301,12 +304,7 @@ public class LBanner extends FrameLayout {
     }
 
 
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            return false;
-        }
-    });
+    private WeakHandler handler = new WeakHandler();
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -517,7 +515,7 @@ public class LBanner extends FrameLayout {
         if (mBannerStyle == LBannerStyle.RecyclerViewStyle) {//RecyclerView实现方式
             buildRecyclerView();
         } else if (mBannerStyle == LBannerStyle.ViewPagerMaxStyle) {//ViewPager最大值的实现方式
-            buildMaxViewPager();
+//            buildMaxViewPager();
         } else if (mBannerStyle == LBannerStyle.ViewPagerHeadFootStyle) {//这边默认如果的话会去使用ViewPager加头加尾的实现方式
             buildHeadFootViewPager();
         }
@@ -536,12 +534,10 @@ public class LBanner extends FrameLayout {
                 buildRecyclerData(data);
             } else if (mBannerStyle == LBannerStyle.ViewPagerMaxStyle) {//ViewPager最大值实现方式
                 buildMaxViewPagerData(data);
-                if (mShowIndicator) {
-                    buildIndicator(mData.size());
-                }
-                if (mLoop) {
-                    mViewPager.setCurrentItem(mData.size() * 10000);//取一个较大值，viewpager为0的时候，本身无法向左滑动，这边设置一个大的值
-                }
+                buildMaxViewPager(data);
+//                if (mShowIndicator) {
+//                    buildIndicator(data.size());
+//                }
             } else if (mBannerStyle == LBannerStyle.ViewPagerHeadFootStyle) {//默认是ViewPager加头加尾实现方式
                 buildHeadFootViewPagerData(data);
                 int realSize = 0;
@@ -572,7 +568,7 @@ public class LBanner extends FrameLayout {
         isShow = true;
         if (mBannerStyle == LBannerStyle.RecyclerViewStyle) {//RecyclerView实现方式
         } else if (mBannerStyle == LBannerStyle.ViewPagerMaxStyle) {//ViewPager最大值实现方式
-            mLBannerMaxAdapter.setData(mData);
+//            mLBannerMaxAdapter.setData(mData);
         } else if (mBannerStyle == LBannerStyle.ViewPagerHeadFootStyle) {//默认是ViewPager加头加尾实现方式
             mLBannerHeadFootAdapter.setData(mData);
             mViewPager.setCurrentItem(mCurrentPos);

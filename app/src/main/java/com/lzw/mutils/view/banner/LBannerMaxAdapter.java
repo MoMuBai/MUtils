@@ -42,18 +42,19 @@ public final class LBannerMaxAdapter extends PagerAdapter {
         notifyDataSetChanged();
     }
 
-    public LBannerMaxAdapter(Context mContext, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener, boolean mLoop) {
+    public LBannerMaxAdapter(Context mContext, List mData, LBannerImageLoader lBannerImageLoader, LBannerListener lBannerListener, boolean mLoop) {
         this.mContext = mContext;
         this.mLBannerImageLoader = lBannerImageLoader;
         this.mLBannerListener = lBannerListener;
         this.mLoop = mLoop;
         this.mData = new ArrayList();
+        this.mData = mData;
         this.viewList = new ArrayList<>();
     }
 
     @Override
     public int getCount() {
-        return mLoop && mData.size() > 0 ? Integer.MAX_VALUE / 2 : mData.size();
+        return mLoop ? Integer.MAX_VALUE : mData.size();
     }
 
     @Override
@@ -67,15 +68,12 @@ public final class LBannerMaxAdapter extends PagerAdapter {
         if (null == imageView) {
             imageView = new ImageView(mContext);
         }
-        if (mData.size() > 0) {
-            if (mLoop) {
-                currentPosition = position % mData.size();
-            } else {
-                currentPosition = position;
-            }
-            Log.d("lzwwwww", "pos: " + currentPosition);
-            mLBannerImageLoader.showLoadView(imageView, mData.get(currentPosition));
+        if (mLoop) {
+            currentPosition = position % mData.size();
+        } else {
+            currentPosition = position;
         }
+        mLBannerImageLoader.showLoadView(imageView, mData.get(currentPosition));
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

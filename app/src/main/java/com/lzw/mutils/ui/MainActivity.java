@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.lzw.mutils.R;
 import com.lzw.mutils.tool.To;
+import com.lzw.mutils.tool.event.MSubscribe;
+import com.lzw.mutils.tool.event.MThreadMode;
 import com.lzw.mutils.tool.permission.CheckPermissionUtils;
 import com.lzw.mutils.tool.permission.PermissionCallBack;
 import com.lzw.mutils.ui.banner.LBannerActivity;
@@ -106,6 +108,11 @@ public class MainActivity extends AppCompatActivity implements PopupWindow.OnDis
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         CheckPermissionUtils.getInstance(this).permissionsResult(requestCode, permissions, grantResults);//这边只需要将回调参数传递到CheckPermissionUtils就可以
+    }
+
+    @MSubscribe(threadMode = MThreadMode.MAIN)
+    public void meventBus(String value) {
+
     }
 
     public void banner(View view) {
